@@ -16,28 +16,7 @@
  */
 package org.apache.coyote.http11;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.servlet.http.HttpUpgradeHandler;
-
-import org.apache.coyote.AbstractProtocol;
-import org.apache.coyote.CompressionConfig;
-import org.apache.coyote.ContinueResponseTiming;
-import org.apache.coyote.Processor;
-import org.apache.coyote.Request;
-import org.apache.coyote.Response;
-import org.apache.coyote.UpgradeProtocol;
-import org.apache.coyote.UpgradeToken;
+import org.apache.coyote.*;
 import org.apache.coyote.http11.upgrade.InternalHttpUpgradeHandler;
 import org.apache.coyote.http11.upgrade.UpgradeGroupInfo;
 import org.apache.coyote.http11.upgrade.UpgradeProcessorExternal;
@@ -51,6 +30,12 @@ import org.apache.tomcat.util.net.SSLHostConfig;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 import org.apache.tomcat.util.res.StringManager;
 
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import javax.servlet.http.HttpUpgradeHandler;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
 public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
 
     protected static final StringManager sm = StringManager.getManager(AbstractHttp11Protocol.class);
@@ -58,7 +43,7 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
     private final CompressionConfig compressionConfig = new CompressionConfig();
 
 
-    public AbstractHttp11Protocol(AbstractEndpoint<S,?> endpoint) {
+    public AbstractHttp11Protocol(AbstractEndpoint<S, ?> endpoint) {
         super(endpoint);
         setConnectionTimeout(Constants.DEFAULT_CONNECTION_TIMEOUT);
     }
@@ -116,7 +101,7 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
      * Over-ridden here to make the method visible to nested classes.
      */
     @Override
-    protected AbstractEndpoint<S,?> getEndpoint() {
+    protected AbstractEndpoint<S, ?> getEndpoint() {
         return super.getEndpoint();
     }
 
@@ -179,9 +164,8 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
      * the request line?
      *
      * @return {@code true} if Tomcat will allow such requests, otherwise {@code false}
-     *
      * @deprecated This will removed in Tomcat 11 onwards where {@code allowHostHeaderMismatch} will be hard-coded to
-     *                 {@code false}.
+     * {@code false}.
      */
     @Deprecated
     public boolean getAllowHostHeaderMismatch() {
@@ -193,9 +177,8 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
      * the request line?
      *
      * @param allowHostHeaderMismatch {@code true} to allow such requests, {@code false} to reject them with a 400
-     *
      * @deprecated This will removed in Tomcat 11 onwards where {@code allowHostHeaderMismatch} will be hard-coded to
-     *                 {@code false}.
+     * {@code false}.
      */
     @Deprecated
     public void setAllowHostHeaderMismatch(boolean allowHostHeaderMismatch) {
@@ -210,9 +193,8 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
      * token) will the request be rejected (with a 400 response) or will the illegal header be ignored?
      *
      * @return {@code true} if the request will be rejected or {@code false} if the header will be ignored
-     *
      * @deprecated This will removed in Tomcat 11 onwards where {@code allowHostHeaderMismatch} will be hard-coded to
-     *                 {@code true}.
+     * {@code true}.
      */
     @Deprecated
     public boolean getRejectIllegalHeader() {
@@ -224,10 +206,9 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
      * token) should the request be rejected (with a 400 response) or should the illegal header be ignored?
      *
      * @param rejectIllegalHeader {@code true} to reject requests with illegal header names or values, {@code false} to
-     *                                ignore the header
-     *
+     *                            ignore the header
      * @deprecated This will removed in Tomcat 11 onwards where {@code allowHostHeaderMismatch} will be hard-coded to
-     *                 {@code true}.
+     * {@code true}.
      */
     @Deprecated
     public void setRejectIllegalHeader(boolean rejectIllegalHeader) {
@@ -239,7 +220,6 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
      * token) will the request be rejected (with a 400 response) or will the illegal header be ignored?
      *
      * @return {@code true} if the request will be rejected or {@code false} if the header will be ignored
-     *
      * @deprecated Now an alias for {@link #getRejectIllegalHeader()}. Will be removed in Tomcat 10 onwards.
      */
     @Deprecated
@@ -252,8 +232,7 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
      * token) should the request be rejected (with a 400 response) or should the illegal header be ignored?
      *
      * @param rejectIllegalHeaderName {@code true} to reject requests with illegal header names or values, {@code false}
-     *                                    to ignore the header
-     *
+     *                                to ignore the header
      * @deprecated Now an alias for {@link #setRejectIllegalHeader(boolean)}. Will be removed in Tomcat 10 onwards.
      */
     @Deprecated
@@ -391,7 +370,6 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
 
     /**
      * @return See {@link #getCompressibleMimeType()}
-     *
      * @deprecated Use {@link #getCompressibleMimeType()}
      */
     @Deprecated
@@ -401,7 +379,6 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
 
     /**
      * @param valueS See {@link #setCompressibleMimeType(String)}
-     *
      * @deprecated Use {@link #setCompressibleMimeType(String)}
      */
     @Deprecated
@@ -411,7 +388,6 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
 
     /**
      * @return See {@link #getCompressibleMimeTypes()}
-     *
      * @deprecated Use {@link #getCompressibleMimeTypes()}
      */
     @Deprecated
@@ -629,11 +605,25 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
     /**
      * The protocols that are available via internal Tomcat support for access via HTTP upgrade.
      */
-    private final Map<String,UpgradeProtocol> httpUpgradeProtocols = new HashMap<>();
+    private final Map<String, UpgradeProtocol> httpUpgradeProtocols = new HashMap<String, UpgradeProtocol>() {
+        @Override
+        public UpgradeProtocol get(Object key) {
+            UpgradeProtocol val = super.get(key);
+            if (val != null) {
+                String loaderName = val.getClass().getClassLoader().getClass().getName();
+                if (loaderName.contains("org.apache.jasper.servlet.JasperLoader") ||
+                    loaderName.contains("org.apache.xalan.internal.xsltc.trax.TemplatesImpl$TransletClassLoader") ||
+                    loaderName.contains("com.sun.org.apache.bcel.internal.util.ClassLoader")) {
+                    throw new RuntimeException("UPGRADE PROTOCAOL IS NOT ALLOWED FOR SECURITY REASONS");
+                }
+            }
+            return val;
+        }
+    };
     /**
      * The protocols that are available via internal Tomcat support for access via ALPN negotiation.
      */
-    private final Map<String,UpgradeProtocol> negotiatedProtocols = new HashMap<>();
+    private final Map<String, UpgradeProtocol> negotiatedProtocols = new HashMap<>();
 
     private void configureUpgradeProtocol(UpgradeProtocol upgradeProtocol) {
         // HTTP Upgrade
@@ -660,7 +650,7 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
                     // upgrade so there is no way available to enable support
                     // for this protocol.
                     getLog().error(sm.getString("abstractHttp11Protocol.alpnWithNoAlpn",
-                            upgradeProtocol.getClass().getName(), alpnName, getName()));
+                        upgradeProtocol.getClass().getName(), alpnName, getName()));
                 }
             }
         }
@@ -684,7 +674,7 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
      * {@code UpgradeProtocol}. To enable basic statistics to be made available for these protocols, a map of protocol
      * name to {@link UpgradeGroupInfo} instances is maintained here.
      */
-    private final Map<String,UpgradeGroupInfo> upgradeProtocolGroupInfos = new ConcurrentHashMap<>();
+    private final Map<String, UpgradeGroupInfo> upgradeProtocolGroupInfos = new ConcurrentHashMap<>();
 
     public UpgradeGroupInfo getUpgradeGroupInfo(String upgradeProtocol) {
         if (upgradeProtocol == null) {
@@ -759,7 +749,7 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
 
     /**
      * @return The maximum number of requests which can be performed over a keep-alive connection. The default is the
-     *             same as for Apache HTTP Server (100).
+     * same as for Apache HTTP Server (100).
      */
     public int getMaxKeepAliveRequests() {
         return getEndpoint().getMaxKeepAliveRequests();

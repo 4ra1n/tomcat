@@ -241,7 +241,6 @@
   </path>
 
   <path id="tomcat.test.classpath">
-    <pathelement location="${test.basedir}/webapps/examples/WEB-INF/classes"/>
     <pathelement location="${test.classes}"/>
     <pathelement location="${tomcat.i18n}"/>
     <pathelement location="${junit.jar}"/>
@@ -744,13 +743,6 @@
           file="conf/catalina.properties" encoding="ISO-8859-1">
       <filterset refid="version.filters"/>
     </copy>
-    <!-- Copy jdbc-pool documentation -->
-    <copy tofile="webapps/docs/jdbc-pool.xml"
-          file="${tomcat.jdbc.dir}/doc/jdbc-pool.xml" encoding="UTF-8">
-      <filterset>
-        <filter token="TOMCAT_PROJECT_DEST" value="project.xml"/>
-      </filterset>
-    </copy>
   </target>
 
   <target name="compile" depends="download-compile,validate">
@@ -1035,12 +1027,6 @@
   </target>
 
   <target name="build-docs" depends="compile-prepare" description="Builds all documentation from XML sources">
-
-    <!-- Validation of changelog.xml -->
-    <xmlvalidate
-      file="webapps/docs/changelog.xml"
-    />
-
     <copy todir="${tomcat.build}/webapps">
       <fileset dir="webapps">
         <include name="docs/images/**"/>
@@ -1060,112 +1046,9 @@
         <include name="docs/**/*.html"/>
       </fileset>
     </copy>
-    <copy todir="${tomcat.build}/webapps/docs" encoding="ISO-8859-1">
-      <filterset refid="version.filters"/>
-      <fileset dir=".">
-        <include name="BUILDING.txt"/>
-        <include name="RUNNING.txt"/>
-      </fileset>
-    </copy>
-    <copy tofile="${tomcat.build}/webapps/docs/RELEASE-NOTES.txt" file="RELEASE-NOTES" encoding="ISO-8859-1">
-      <filterset refid="version.filters"/>
-    </copy>
-    <copy tofile="${tomcat.build}/webapps/docs/mbeans-descriptors.dtd"
-            file="java/org/apache/tomcat/util/modeler/mbeans-descriptors.dtd" />
-
-    <copy   tofile="${tomcat.build}/webapps/docs/appdev/sample/build.xml"
-              file="webapps/docs/appdev/build.xml.txt"/>
-
-    <!-- XSL processing -->
-    <xslt basedir="webapps/docs"
-           destdir="${tomcat.build}/webapps/docs"
-         extension=".html"
-             style="webapps/docs/tomcat-docs.xsl"
- filenameparameter="filename"
-          excludes="build.xml project.xml"
-          includes="*.xml">
-      <param name="sitedir" expression="tomcat-${version.major.minor}-doc/"/>
-      <param name="subdir" expression=""/>
-      <param name="relative-path" expression="."/>
-      <param name="version" expression="${version}"/>
-      <param name="majorversion" expression="${version.major}"/>
-      <param name="majorminorversion" expression="${version.major.minor}"/>
-      <param name="build-date" expression="${today}"/>
-      <param name="build-date-iso-8601" expression="${today-iso-8601}"/>
-      <param name="year" expression="${year}"/>
-    </xslt>
-    <xslt basedir="webapps/docs/appdev"
-           destdir="${tomcat.build}/webapps/docs/appdev"
-         extension=".html"
-             style="webapps/docs/tomcat-docs.xsl"
- filenameparameter="filename"
-          excludes="project.xml"
-          includes="*.xml">
-      <param name="sitedir" expression="tomcat-${version.major.minor}-doc/"/>
-      <param name="subdir" expression="appdev/"/>
-      <param name="relative-path" expression=".."/>
-      <param name="version" expression="${version}"/>
-      <param name="majorversion" expression="${version.major}"/>
-      <param name="majorminorversion" expression="${version.major.minor}"/>
-      <param name="build-date" expression="${today}"/>
-      <param name="build-date-iso-8601" expression="${today-iso-8601}"/>
-      <param name="year" expression="${year}"/>
-    </xslt>
-    <xslt basedir="webapps/docs/config"
-           destdir="${tomcat.build}/webapps/docs/config"
-         extension=".html"
-             style="webapps/docs/tomcat-docs.xsl"
- filenameparameter="filename"
-          excludes="project.xml"
-          includes="*.xml">
-      <param name="sitedir" expression="tomcat-${version.major.minor}-doc/"/>
-      <param name="subdir" expression="config/"/>
-      <param name="relative-path" expression=".."/>
-      <param name="version" expression="${version}"/>
-      <param name="majorversion" expression="${version.major}"/>
-      <param name="majorminorversion" expression="${version.major.minor}"/>
-      <param name="build-date" expression="${today}"/>
-      <param name="build-date-iso-8601" expression="${today-iso-8601}"/>
-      <param name="year" expression="${year}"/>
-    </xslt>
-    <xslt basedir="webapps/docs/architecture"
-           destdir="${tomcat.build}/webapps/docs/architecture"
-         extension=".html"
-             style="webapps/docs/tomcat-docs.xsl"
- filenameparameter="filename"
-          excludes="project.xml"
-          includes="*.xml">
-      <param name="sitedir" expression="tomcat-${version.major.minor}-doc/"/>
-      <param name="subdir" expression="architecture/"/>
-      <param name="relative-path" expression=".."/>
-      <param name="version" expression="${version}"/>
-      <param name="majorversion" expression="${version.major}"/>
-      <param name="majorminorversion" expression="${version.major.minor}"/>
-      <param name="build-date" expression="${today}"/>
-      <param name="build-date-iso-8601" expression="${today-iso-8601}"/>
-      <param name="year" expression="${year}"/>
-    </xslt>
-
-    <xslt basedir="webapps/docs/tribes"
-               destdir="${tomcat.build}/webapps/docs/tribes"
-             extension=".html"
-                 style="webapps/docs/tomcat-docs.xsl"
-     filenameparameter="filename"
-              excludes="project.xml"
-              includes="*.xml">
-      <param name="sitedir" expression="tomcat-${version.major.minor}-doc/"/>
-      <param name="subdir" expression="tribes/"/>
-      <param name="relative-path" expression=".."/>
-      <param name="version" expression="${version}"/>
-      <param name="majorversion" expression="${version.major}"/>
-      <param name="majorminorversion" expression="${version.major.minor}"/>
-      <param name="build-date" expression="${today}"/>
-      <param name="build-date-iso-8601" expression="${today-iso-8601}"/>
-      <param name="year" expression="${year}"/>
-    </xslt>
   </target>
 
-  <target name="deploy" depends="package,build-docs,build-tomcat-jdbc,compile-webapp-examples"
+  <target name="deploy" depends="package,build-docs,build-tomcat-jdbc"
           description="Default. Builds a working Tomcat instance">
 
     <copy tofile="${tomcat.build}/bin/commons-daemon.jar" file="${commons-daemon.jar}" />
@@ -1215,11 +1098,6 @@
         <include name="ROOT/index.jsp"/>
       </fileset>
     </copy>
-
-    <copy tofile="${tomcat.build}/webapps/ROOT/RELEASE-NOTES.txt" file="RELEASE-NOTES" encoding="ISO-8859-1">
-      <filterset refid="version.filters"/>
-    </copy>
-
     <!-- Delete all other versions of Eclipse JDT Compiler and copy the current one -->
     <local name="jdt.jar.filename" />
     <basename property="jdt.jar.filename" file="${jdt.jar}"/>
@@ -1230,32 +1108,6 @@
       </fileset>
     </delete>
     <copy file="${jdt.jar}" todir="${tomcat.build}/lib"/>
-
-    <!-- Add sources for examples -->
-    <antcall target="examples-sources" />
-  </target>
-
-  <target name="compile-webapp-examples" >
-
-    <!-- Build classes for examples webapp -->
-    <mkdir dir="${tomcat.build}/webapps/examples/WEB-INF/classes"/>
-    <javac   srcdir="webapps/examples/WEB-INF/classes"
-             destdir="${tomcat.build}/webapps/examples/WEB-INF/classes"
-             debug="${compile.debug}" deprecation="${compile.deprecation}"
-             release="${compile.release}"
-             classpath="${tomcat.classes}"
-             encoding="ISO-8859-1"
-             includeantruntime="false">
-    </javac>
-
-    <!-- Convert the message files of the examples webapp from UTF-8 to ASCII.
-    This can be removed after upgrading to Java 9+ as the minimum JRE and
-    specifying the encoding when loading the ResourceBundles -->
-    <native2ascii src="webapps/examples/WEB-INF/classes"
-                  dest="${tomcat.build}/webapps/examples/WEB-INF/classes"
-                  includes="**/LocalStrings*.properties"
-                  encoding="UTF-8"/>
-
   </target>
 
   <target name="build-tomcat-jdbc" depends="package">
@@ -1286,91 +1138,6 @@
     </ant>
   </target>
 
-  <target name="examples-sources" description="Create examples sources"
-          unless="examples.sources.skip" >
-    <taskdef name="txt2html"
-             classname="org.apache.tomcat.buildutil.Txt2Html"
-             classpath="${tomcat.classes}" />
-
-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsp2/simpletag">
-      <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples">
-        <include name="BookBean.java"/>
-      </fileset>
-      <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples/simpletag">
-        <include name="FindBookSimpleTag.java"/>
-        <include name="RepeatSimpleTag.java"/>
-        <include name="HelloWorldSimpleTag.java"/>
-      </fileset>
-      <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples/el">
-        <include name="Functions.java"/>
-      </fileset>
-    </txt2html>
-
-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsp2/jspattribute">
-      <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples">
-        <include name="FooBean.java"/>
-      </fileset>
-      <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples/simpletag">
-        <include name="ShuffleSimpleTag.java"/>
-        <include name="TileSimpleTag.java"/>
-        <include name="HelloWorldSimpleTag.java"/>
-      </fileset>
-    </txt2html>
-
-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/cal">
-      <fileset dir="webapps/examples/WEB-INF/classes/cal">
-        <include name="Entries.java"/>
-        <include name="Entry.java"/>
-        <include name="JspCalendar.java"/>
-        <include name="TableBean.java"/>
-      </fileset>
-    </txt2html>
-
-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsptoserv">
-      <fileset dir="webapps/examples/WEB-INF/classes">
-        <include name="ServletToJsp.java"/>
-      </fileset>
-    </txt2html>
-
-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsp2/el">
-      <fileset dir="webapps/examples/WEB-INF/classes/examples">
-        <include name="ValuesTag.java"/>
-      </fileset>
-      <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples">
-        <include name="ValuesBean.java"/>
-      </fileset>
-      <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples/el">
-        <include name="Functions.java"/>
-      </fileset>
-    </txt2html>
-
-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsp2/misc">
-      <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples/simpletag">
-        <include name="EchoAttributesTag.java"/>
-      </fileset>
-    </txt2html>
-
-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsp2/tagfiles">
-      <fileset dir="webapps/examples/WEB-INF/tags">
-        <include name="**/*.tag" />
-      </fileset>
-    </txt2html>
-
-    <txt2html todir="${tomcat.build}/webapps/examples">
-      <fileset dir="webapps/examples">
-        <include name="**/*.jsp" />
-        <include name="**/*.jspx" />
-        <include name="**/*.jspf" />
-        <exclude name="error/errorpge.jsp"/>
-        <exclude name="forward/one.jsp"/>
-        <exclude name="include/foo.jsp"/>
-        <exclude name="jsptoserv/hello.jsp"/>
-        <exclude name="security/protected/error.jsp"/>
-        <exclude name="security/protected/index.jsp"/>
-        <exclude name="security/protected/login.jsp"/>
-      </fileset>
-    </txt2html>
-  </target>
   <target name="embed-jars" description="Create embedded jars"
     depends="build-manifests,compile" >
 
@@ -1478,7 +1245,7 @@
 
   </target>
 
-  <target name="test-compile" depends="compile,download-test-compile,compile-webapp-examples" >
+  <target name="test-compile" depends="compile,download-test-compile" >
     <mkdir dir="${test.classes}"/>
     <!-- Compile -->
     <javac srcdir="test" destdir="${test.classes}"
@@ -1853,15 +1620,6 @@
     <fixcrlf srcdir="${tomcat.dist}/bin" includes="*.bat" eol="crlf" encoding="ISO-8859-1" fixlast="false" />
     <chmod      dir="${tomcat.dist}/bin" includes="*.sh"  perm="+x"/>
 
-    <!-- Windows binaries -->
-    <!-- 32 bit -->
-    <copy file="${commons-daemon.home}/windows/prunsrv.exe"
-        tofile="${tomcat.dist}/bin/tomcat${version.major}.exe" />
-    <copy file="${commons-daemon.home}/windows/prunmgr.exe"
-        tofile="${tomcat.dist}/bin/tomcat${version.major}w.exe" />
-    <!-- 64 bit amd -->
-    <copy file="${commons-daemon.home}/windows/amd64/prunsrv.exe"
-        tofile="${tomcat.dist}/bin/x64/tomcat${version.major}.exe" />
     <!-- tc native -->
     <copy todir="${tomcat.dist}/bin">
       <fileset dir="${tomcat-native.home}/bin">
@@ -1881,196 +1639,6 @@
 Apache Tomcat ${version} native binaries for Win64 AMD64/EMT64 platform.
     </echo>
 
-  </target>
-
-  <target name="javadoc" depends="dist-source,extras-webservices-prepare"
-    description="Create the Tomcat javadoc" >
-    <javadoc packagenames="javax.annotation.*"
-      sourcepath="${tomcat.dist}/src/java"
-      destdir="${tomcat.dist}/webapps/docs/annotationapi"
-      version="true"
-      windowtitle="Common Annotations ${annotation.spec.version} API Documentation - Apache Tomcat ${version}"
-      doctitle="Common Annotations ${annotation.spec.version} API - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}"
-      header="&lt;b&gt;Common Annotations ${annotation.spec.version} - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}&lt;/b&gt;"
-      bottom="Copyright &amp;#169; 2000-${year} Apache Software Foundation.
-              &lt;br/&gt;
-              Apache Tomcat, Tomcat, Apache, the Apache Tomcat logo and the Apache logo are either registered trademarks
-              or trademarks of the Apache Software Foundation."
-      encoding="UTF-8"
-      docencoding="UTF-8"
-      charset="UTF-8"
-      additionalparam="-breakiterator -notimestamp -html5"
-      source="${compile.release}"
-      maxmemory="512m"
-      failonerror="${javadoc.failonerror}"
-      failonwarning="${javadoc.failonwarning}">
-      <classpath>
-        <path refid="compile.classpath"/>
-        <path location="${ant.core.lib}"/>
-      </classpath>
-    </javadoc>
-    <javadoc packagenames="javax.servlet.*"
-      excludepackagenames="javax.servlet.jsp.*"
-      sourcepath="${tomcat.dist}/src/java"
-      destdir="${tomcat.dist}/webapps/docs/servletapi"
-      version="true"
-      windowtitle="Servlet ${servlet.spec.version} API Documentation - Apache Tomcat ${version}"
-      doctitle="Servlet ${servlet.spec.version} API - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}"
-      header="&lt;b&gt;Servlet ${servlet.spec.version} - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}&lt;/b&gt;"
-      bottom="Copyright &amp;#169; 2000-${year} Apache Software Foundation.
-              &lt;br/&gt;
-              Apache Tomcat, Tomcat, Apache, the Apache Tomcat logo and the Apache logo are either registered trademarks
-              or trademarks of the Apache Software Foundation."
-      encoding="UTF-8"
-      docencoding="UTF-8"
-      charset="UTF-8"
-      additionalparam="-breakiterator -notimestamp -html5"
-      source="${compile.release}"
-      maxmemory="512m"
-      failonerror="${javadoc.failonerror}"
-      failonwarning="${javadoc.failonwarning}">
-      <classpath>
-        <path refid="compile.classpath"/>
-        <path refid="tomcat.webservices.classpath"/>
-        <path location="${ant.core.lib}"/>
-      </classpath>
-    </javadoc>
-    <javadoc packagenames="javax.servlet.jsp.*"
-      sourcepath="${tomcat.dist}/src/java"
-      destdir="${tomcat.dist}/webapps/docs/jspapi"
-      version="true"
-      windowtitle="JSP ${jsp.spec.version} API Documentation - Apache Tomcat ${version}"
-      doctitle="JSP ${jsp.spec.version} API - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}"
-      header="&lt;b&gt;JSP ${jsp.spec.version} - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}&lt;/b&gt;"
-      bottom="Copyright &amp;#169; 2000-${year} Apache Software Foundation.
-              &lt;br/&gt;
-              Apache Tomcat, Tomcat, Apache, the Apache Tomcat logo and the Apache logo are either registered trademarks
-              or trademarks of the Apache Software Foundation."
-      encoding="UTF-8"
-      docencoding="UTF-8"
-      charset="UTF-8"
-      additionalparam="-breakiterator -notimestamp -html5"
-      source="${compile.release}"
-      maxmemory="512m"
-      failonerror="${javadoc.failonerror}"
-      failonwarning="${javadoc.failonwarning}">
-      <classpath>
-        <path refid="compile.classpath"/>
-        <path refid="tomcat.webservices.classpath"/>
-        <path location="${ant.core.lib}"/>
-      </classpath>
-    </javadoc>
-    <javadoc packagenames="javax.el.*"
-      sourcepath="${tomcat.dist}/src/java"
-      destdir="${tomcat.dist}/webapps/docs/elapi"
-      version="true"
-      windowtitle="EL ${el.spec.version} API Documentation - Apache Tomcat ${version}"
-      doctitle="EL ${el.spec.version} API - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}"
-      header="&lt;b&gt;EL ${el.spec.version} - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}&lt;/b&gt;"
-      bottom="Copyright &amp;#169; 2000-${year} Apache Software Foundation.
-              &lt;br/&gt;
-              Apache Tomcat, Tomcat, Apache, the Apache Tomcat logo and the Apache logo are either registered trademarks
-              or trademarks of the Apache Software Foundation."
-      encoding="UTF-8"
-      docencoding="UTF-8"
-      charset="UTF-8"
-      additionalparam="-breakiterator -notimestamp -html5"
-      source="${compile.release}"
-      maxmemory="512m"
-      failonerror="${javadoc.failonerror}"
-      failonwarning="${javadoc.failonwarning}">
-      <classpath>
-        <path refid="compile.classpath"/>
-        <path refid="tomcat.webservices.classpath"/>
-        <path location="${ant.core.lib}"/>
-      </classpath>
-    </javadoc>
-    <javadoc packagenames="javax.websocket.*"
-      sourcepath="${tomcat.dist}/src/java"
-      destdir="${tomcat.dist}/webapps/docs/websocketapi"
-      version="true"
-      windowtitle="WebSocket ${websocket.spec.version} API Documentation - Apache Tomcat ${version}"
-      doctitle="WebSocket ${websocket.spec.version} API - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}"
-      header="&lt;b&gt;WebSocket ${websocket.spec.version} - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}&lt;/b&gt;"
-      bottom="Copyright &amp;#169; 2000-${year} Apache Software Foundation.
-              &lt;br/&gt;
-              Apache Tomcat, Tomcat, Apache, the Apache Tomcat logo and the Apache logo are either registered trademarks
-              or trademarks of the Apache Software Foundation."
-      encoding="UTF-8"
-      docencoding="UTF-8"
-      charset="UTF-8"
-      additionalparam="-breakiterator -notimestamp -html5"
-      source="${compile.release}"
-      maxmemory="512m"
-      failonerror="${javadoc.failonerror}"
-      failonwarning="${javadoc.failonwarning}">
-      <classpath>
-        <path refid="compile.classpath"/>
-        <path refid="tomcat.webservices.classpath"/>
-        <path location="${ant.core.lib}"/>
-      </classpath>
-    </javadoc>
-    <javadoc packagenames="javax.security.auth.message.*"
-      sourcepath="${tomcat.dist}/src/java"
-      destdir="${tomcat.dist}/webapps/docs/jaspicapi"
-      version="true"
-      windowtitle="JASPIC ${jaspic.spec.version} API Documentation - Apache Tomcat ${version}"
-      doctitle="JASPIC ${jaspic.spec.version} API - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}"
-      header="&lt;b&gt;JASPIC ${jaspic.spec.version} - Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}&lt;/b&gt;"
-      bottom="Copyright &amp;#169; 2000-${year} Apache Software Foundation.
-              &lt;br/&gt;
-              Apache Tomcat, Tomcat, Apache, the Apache Tomcat logo and the Apache logo are either registered trademarks
-              or trademarks of the Apache Software Foundation."
-      encoding="UTF-8"
-      docencoding="UTF-8"
-      charset="UTF-8"
-      additionalparam="-breakiterator -notimestamp -html5"
-      maxmemory="512m"
-      failonerror="${javadoc.failonerror}"
-      failonwarning="${javadoc.failonwarning}">
-      <classpath>
-        <path refid="compile.classpath"/>
-        <path location="${ant.core.lib}"/>
-      </classpath>
-    </javadoc>
-    <javadoc packagenames="org.apache.*"
-      destdir="${tomcat.dist}/webapps/docs/api"
-      version="true"
-      windowtitle="Apache Tomcat ${version} API Documentation"
-      doctitle="Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version} API"
-      header="&lt;b&gt;Apache Tomcat&lt;sup&gt;&#174;&lt;/sup&gt; ${version}&lt;/b&gt;"
-      bottom="Copyright &amp;#169; 2000-${year} Apache Software Foundation.
-              &lt;br/&gt;
-              Apache Tomcat, Tomcat, Apache, the Apache Tomcat logo and the Apache logo are either registered trademarks
-              or trademarks of the Apache Software Foundation."
-      encoding="UTF-8"
-      docencoding="UTF-8"
-      charset="UTF-8"
-      additionalparam="-breakiterator -notimestamp -html5"
-      source="${compile.release}"
-      maxmemory="512m"
-      failonerror="${javadoc.failonerror}"
-      failonwarning="${javadoc.failonwarning}">
-      <classpath>
-        <path refid="compile.classpath"/>
-        <path refid="tomcat.webservices.classpath"/>
-        <path location="${ant.core.lib}"/>
-      </classpath>
-      <link href="../annotationapi"/>
-      <link href="../servletapi"/>
-      <link href="../jspapi"/>
-      <link href="../elapi"/>
-      <link href="../websocketapi"/>
-      <link href="../jaspicapi"/>
-      <link href="https://docs.oracle.com/javase/7/docs/api/"/>
-      <link href="https://docs.oracle.com/javaee/7/api/"/>
-      <packageset dir="${tomcat.dist}/src/java/">
-        <include name="org/**"/>
-        <exclude name="org/apache/el/parser/**"/>
-      </packageset>
-      <!--jdbc-pool src files for javadoc-->
-      <packageset dir="${tomcat.dist}/src/modules/jdbc-pool/src/main/java"/>
-    </javadoc>
   </target>
 
   <target name="dist-deployer" depends="dist-prepare,deploy"
@@ -2135,18 +1703,6 @@ Apache Tomcat ${version} native binaries for Win64 AMD64/EMT64 platform.
     <copy todir="${tomcat.deployer}">
       <fileset dir="${basedir}/res/deployer" />
     </copy>
-
-    <!-- Copy deployer documentation -->
-    <copy todir="${tomcat.deployer}">
-      <fileset dir="${tomcat.build}/webapps/docs">
-        <include name="images/asf-logo.svg" />
-        <include name="images/tomcat.png" />
-        <include name="images/docs-stylesheet.css" />
-      </fileset>
-    </copy>
-    <copy tofile="${tomcat.deployer}/deployer-howto.html"
-      file="${tomcat.build}/webapps/docs/deployer-howto.html"/>
-
   </target>
 
   <target name="dist-source" depends="compile-prepare">
@@ -2191,7 +1747,6 @@ Apache Tomcat ${version} native binaries for Win64 AMD64/EMT64 platform.
             <filename name="java/org/apache/catalina/startup/catalina.properties" />
             <filename name="java/org/apache/el/parser/ELParser.jj" />
             <filename name="logs/**" />
-            <filename name="webapps/docs/jdbc-pool.xml" />
             <filename name="work/**" />
             <filename name="modules/jdbc-pool/bin/**" />
             <filename name="modules/jdbc-pool/includes/**" />
@@ -2206,146 +1761,6 @@ Apache Tomcat ${version} native binaries for Win64 AMD64/EMT64 platform.
         </not>
       </fileset>
     </copy>
-  </target>
-
-  <target name="-installer-pre-init">
-    <property environment="env" />
-    <condition property="wine.ok">
-      <or>
-        <os family="windows" />
-        <available file="wine" filepath="${env.PATH}" />
-        <isset property="skip.installer"/>
-      </or>
-    </condition>
-  </target>
-
-  <target name="-installer-init" depends="-installer-pre-init" unless="${wine.ok}">
-    <fail message="The executable wine was not found on the current path.
-Wine is required to build the Windows installer when running a release build on
-a non-Windows platform. To skip building the Windows installer, set the
-skip.installer property in build.properties" />
-  </target>
-
-  <target name="-installer-prep"
-      unless="skip.installer" depends="dist-static,-installer-init">
-    <copy todir="${tomcat.dist}">
-      <fileset dir="res/install-win">
-        <include name="INSTALLLICENSE" />
-        <include name="*.bmp" />
-        <include name="*.ico" />
-        <include name="*.xml" />
-        <include name="Uninstall.exe.sig" />
-      </fileset>
-    </copy>
-    <copy file="res/install-win/tomcat-installer.exe.sig"
-        tofile="${tomcat.release}/v${version}/bin/${final.name}.exe.sig"
-        failonerror="false"
-        quiet="true" />
-    <copy file="${nsis.installoptions.dll}" todir="${tomcat.dist}" />
-    <copy file="${nsis.nsexec.dll}" todir="${tomcat.dist}" />
-    <copy file="${nsis.nsisdl.dll}" todir="${tomcat.dist}" />
-    <copy file="${nsis.system.dll}" todir="${tomcat.dist}" />
-    <copy file="${nsis.nsdialogs.dll}" todir="${tomcat.dist}" />
-    <copy file="res/install-win/tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" overwrite="true" encoding="ISO-8859-1">
-      <filterset refid="version.filters"/>
-    </copy>
-    <fixcrlf srcdir="${tomcat.dist}" eol="crlf"
-        encoding="ISO-8859-1" fixlast="false" >
-      <patternset refid="text.files" />
-    </fixcrlf>
-    <!-- Reproducible builds: consistent timestamps for installer files -->
-    <touch datetime="${tstamp.file}" pattern="yyyy-MM-dd HH:mm:ss">
-      <fileset dir="${tomcat.dist}"/>
-    </touch>
-  </target>
-
-  <target name="-installer-create-tempinstaller"
-      unless="skip.installer" depends="-installer-prep">
-    <exec dir="${tomcat.dist}" executable="${nsis.exe}" osfamily="windows">
-      <arg value="/DUNINSTALLONLY" />
-      <arg value="/DNSISDIR=${nsis.home}" />
-      <arg value="/V2" />
-      <arg value="tomcat.nsi" />
-    </exec>
-    <exec dir="${tomcat.dist}" executable="wine" osfamily="unix">
-      <arg value="${nsis.exe}" />
-      <arg value="/DUNINSTALLONLY" />
-      <arg value="/DNSISDIR=${nsis.home}" />
-      <arg value="/V2" />
-      <arg value="tomcat.nsi" />
-    </exec>
-  </target>
-
-  <target name="-installer-create-uninstaller"
-      unless="skip.installer" depends="-installer-create-tempinstaller">
-    <!-- Execute the temporary installer to create the uninstaller -->
-    <exec dir="${tomcat.dist}" executable="${tomcat.dist}/tempinstaller.exe"
-        osfamily="windows"  />
-    <exec dir="${tomcat.dist}" executable="wine" osfamily="unix">
-      <arg value="${tomcat.dist}/tempinstaller.exe" />
-    </exec>
-    <!-- Reproducible builds: consistent timestamps for installer files -->
-    <touch datetime="${tstamp.file}" pattern="yyyy-MM-dd HH:mm:ss">
-      <fileset dir="${tomcat.dist}"/>
-    </touch>
-  </target>
-
-  <target name="-installer-sign-uninstaller"
-      unless="skip.installer" depends="-installer-create-uninstaller,setup-jsign"
-      if="${do.codesigning}">
-    <!-- If the detached signature doesn't exist, this will sign the file    -->
-    <!-- and create the detached signature. If the detached signature does   -->
-    <!-- exist it will be attached to the file.                              -->
-    <jsign file="${tomcat.dist}/Uninstall.exe"
-        storepass="${codesigning.storepass}"
-        storetype="${codesigning.storetype}"
-        alias="${codesigning.alias}"
-        alg="${codesigning.digest}"
-        tsaurl="http://timestamp.digicert.com"
-        detached="true"/>
-    <!-- Copy detached signature to source tree -->
-    <copy file="${tomcat.dist}/Uninstall.exe.sig" todir="res/install-win"/>
-    <!-- Reproducible builds: consistent timestamps for installer files -->
-    <touch datetime="${tstamp.file}" pattern="yyyy-MM-dd HH:mm:ss">
-      <fileset dir="${tomcat.dist}"/>
-    </touch>
-  </target>
-
-  <target name="-installer" unless="skip.installer"
-      depends="-installer-sign-uninstaller">
-    <exec dir="${tomcat.dist}" executable="${nsis.exe}" osfamily="windows">
-      <arg value="/DNSISDIR=${nsis.home}" />
-      <arg value="/V2" />
-      <arg value="tomcat.nsi" />
-    </exec>
-    <exec dir="${tomcat.dist}" executable="wine" osfamily="unix">
-      <arg value="${nsis.exe}" />
-      <arg value="/DNSISDIR=${nsis.home}" />
-      <arg value="/V2" />
-      <arg value="tomcat.nsi" />
-    </exec>
-    <move file="${tomcat.dist}/tomcat-installer.exe" tofile="${tomcat.release}/v${version}/bin/${final.name}.exe" />
-    <hashAndSign file="${tomcat.release}/v${version}/bin/${final.name}.exe" />
-  </target>
-
-  <target name="installer-sign"
-      description="Builds and optionally signs the Windows installer"
-      depends="-installer,setup-jsign" if="${do.codesigning}" >
-    <jsign file="${tomcat.release}/v${version}/bin/${final.name}.exe"
-        storepass="${codesigning.storepass}"
-        storetype="${codesigning.storetype}"
-        alias="${codesigning.alias}"
-        alg="${codesigning.digest}"
-        tsaurl="http://timestamp.digicert.com"
-        detached="true" />
-    <!-- Copy detached signature to source tree -->
-    <copy file="${tomcat.release}/v${version}/bin/${final.name}.exe.sig"
-        tofile="res/install-win/tomcat-installer.exe.sig"/>
-    <delete file="${tomcat.release}/v${version}/bin/${final.name}.exe.sig" />
-    <!-- .exe has changed so need to redo checksums and OpenPGP signature -->
-    <delete file="${tomcat.release}/v${version}/bin/${final.name}.exe.asc" />
-    <delete file="${tomcat.release}/v${version}/bin/${final.name}.exe.sha512" />
-    <hashAndSign file="${tomcat.release}/v${version}/bin/${final.name}.exe" />
   </target>
 
   <target name="-pre-release-lone-target-check">
@@ -2448,14 +1863,10 @@ gpg.exec=${gpg.exec}
 # Set the user name to use to upload the artefacts to Nexus.
 asf.ldap.username=${release.asfusername}
 </echo>
-    <replace file="webapps/docs/changelog.xml"
-        encoding="UTF-8"
-        token="rtext=&quot;in development&quot;"
-        value="rtext=&quot;&quot;" />
   </target>
 
   <target name="release"
-    depends="clean,release-init,dist-deployer,installer-sign,package-zip,package-winzip,package-tgz,package-deployer-zip,package-deployer-tgz,javadoc,package-docs-tgz,package-src-zip,package-src-tgz,package-src-jar"
+    depends="clean,release-init,dist-deployer,package-zip,package-tgz,package-deployer-zip,package-deployer-tgz,package-docs-tgz,package-src-zip,package-src-tgz,package-src-jar"
     description="Create a Tomcat packaged distribution">
 
     <copy file="KEYS"
@@ -2567,75 +1978,6 @@ asf.ldap.username=${release.asfusername}
     </zip>
 
     <hashAndSign file="${tomcat.release}/v${version}/bin/${final.name}.zip" />
-  </target>
-
-  <!-- Packages the core windows zip distros -->
-  <target name="package-winzip" depends="dist-static">
-    <fixcrlf srcdir="${tomcat.dist}" eol="crlf"
-        encoding="ISO-8859-1" fixlast="false" >
-      <patternset refid="text.files" />
-    </fixcrlf>
-
-    <!-- Windows x86 package -->
-    <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-windows-x86.zip"
-         modificationtime="${tstamp.iso.release}"
-         encoding="UTF8">
-      <zipfileset file="${tomcat.dist}" fullpath="${final.name}"/>
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}">
-        <include name="bin/**"/>
-        <include name="conf/**"/>
-        <include name="logs/**"/>
-        <include name="lib/**"/>
-        <include name="webapps/**"/>
-        <include name="work/**"/>
-        <include name="temp/**"/>
-        <include name="LICENSE"/>
-        <include name="NOTICE"/>
-        <include name="README.md"/>
-        <include name="RELEASE-NOTES"/>
-        <include name="RUNNING.txt"/>
-        <include name="BUILDING.txt" />
-        <include name="CONTRIBUTING.md"/>
-        <exclude name="bin/x64/"/>
-        <exclude name="bin/commons-daemon-native.tar.gz"/>
-        <exclude name="bin/tomcat-native.tar.gz"/>
-      </zipfileset>
-
-    </zip>
-    <hashAndSign file="${tomcat.release}/v${version}/bin/${final.name}-windows-x86.zip" />
-
-    <!-- Windows x64 package -->
-    <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-windows-x64.zip"
-         modificationtime="${tstamp.iso.release}"
-         encoding="UTF8">
-      <zipfileset file="${tomcat.dist}" fullpath="${final.name}"/>
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}">
-        <include name="bin/**"/>
-        <include name="conf/**"/>
-        <include name="logs/**"/>
-        <include name="lib/**"/>
-        <include name="webapps/**"/>
-        <include name="work/**"/>
-        <include name="temp/**"/>
-        <include name="LICENSE"/>
-        <include name="NOTICE"/>
-        <include name="README.md"/>
-        <include name="RELEASE-NOTES"/>
-        <include name="RUNNING.txt"/>
-        <include name="BUILDING.txt" />
-        <include name="CONTRIBUTING.md"/>
-        <exclude name="bin/x64/"/>
-        <exclude name="bin/*.dll"/>
-        <exclude name="bin/tomcat${version.major}.exe"/>
-        <exclude name="bin/commons-daemon-native.tar.gz"/>
-        <exclude name="bin/tomcat-native.tar.gz"/>
-      </zipfileset>
-      <zipfileset dir="${tomcat.dist}/bin/x64" prefix="${final.name}/bin">
-        <include name="*.dll"/>
-        <include name="*.exe"/>
-      </zipfileset>
-    </zip>
-    <hashAndSign file="${tomcat.release}/v${version}/bin/${final.name}-windows-x64.zip" />
   </target>
 
   <!-- Packages the deployer distribution in zip format -->
@@ -2758,19 +2100,9 @@ asf.ldap.username=${release.asfusername}
     <!-- 2. The contents of generated zip files don't have fixed timestamps  -->
     <!-- Process the zip files first as the resulting zip files will need    -->
     <!-- the last modified timestamp to be changed as well.                  -->
-    <fixcrlf srcdir="${tomcat.dist}/webapps/docs" eol="lf"
-        encoding="UTF-8" fixlast="false" >
-      <include name="**/*.js" />
-      <include name="**/element-list" />
-    </fixcrlf>
     <taskdef name="repeatableArchive"
              classname="org.apache.tomcat.buildutil.RepeatableArchive"
              classpath="${tomcat.classes}" />
-    <repeatableArchive datetime="${tstamp.file}" pattern="yyyy-MM-dd HH:mm:ss">
-      <fileset dir="${tomcat.dist}/webapps/docs">
-        <include name="**/*.zip"/>
-      </fileset>
-    </repeatableArchive>
     <touch datetime="${tstamp.file}" pattern="yyyy-MM-dd HH:mm:ss">
       <fileset dir="${tomcat.dist}"/>
     </touch>
@@ -2781,9 +2113,6 @@ asf.ldap.username=${release.asfusername}
         <include name="LICENSE" />
         <include name="NOTICE" />
         <include name="README.md" />
-      </tarfileset>
-      <tarfileset dir="${tomcat.dist}/webapps/docs" prefix="tomcat-${version.major.minor}-doc">
-        <include name="**" />
       </tarfileset>
     </tar>
 
@@ -2975,8 +2304,6 @@ asf.ldap.username=${release.asfusername}
     <ant antfile="${tomcat.jdbc.dir}/build.xml" dir="${tomcat.jdbc.dir}" inheritAll="false" target="clean">
       <property name="tomcat.pool" value="${tomcat.pool}" />
     </ant>
-    <!-- remove jdbc-pool documentation -->
-    <delete file="webapps/docs/jdbc-pool.xml"/>
   </target>
 
 
@@ -3724,8 +3051,6 @@ It appears there are no build artifacts to verify. Please run 'ant release' firs
     <get-release-hash src-or-bin="bin" basefile="${final.name}-deployer.tar.gz" />
     <get-release-hash src-or-bin="bin" basefile="${final.name}-deployer.zip" />
     <get-release-hash src-or-bin="bin" basefile="${final.name}-fulldocs.tar.gz" />
-    <get-release-hash src-or-bin="bin" basefile="${final.name}-windows-x64.zip" />
-    <get-release-hash src-or-bin="bin" basefile="${final.name}-windows-x86.zip" />
     <get-release-hash src-or-bin="bin" basefile="${final.name}.exe" />
     <get-release-hash src-or-bin="bin" basefile="${final.name}.tar.gz" />
     <get-release-hash src-or-bin="bin" basefile="${final.name}.zip" />
@@ -3735,8 +3060,6 @@ It appears there are no build artifacts to verify. Please run 'ant release' firs
     <compare-hashes num="1"  src-or-bin="bin" basefile="${final.name}-deployer.tar.gz" />
     <compare-hashes num="2"  src-or-bin="bin" basefile="${final.name}-deployer.zip" />
     <compare-hashes num="3"  src-or-bin="bin" basefile="${final.name}-fulldocs.tar.gz" />
-    <compare-hashes num="4"  src-or-bin="bin" basefile="${final.name}-windows-x64.zip" />
-    <compare-hashes num="5"  src-or-bin="bin" basefile="${final.name}-windows-x86.zip" />
     <compare-hashes num="6"  src-or-bin="bin" basefile="${final.name}.exe" />
     <compare-hashes num="7"  src-or-bin="bin" basefile="${final.name}.tar.gz" />
     <compare-hashes num="8"  src-or-bin="bin" basefile="${final.name}.zip" />

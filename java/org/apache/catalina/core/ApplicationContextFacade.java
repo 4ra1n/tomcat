@@ -426,7 +426,15 @@ public class ApplicationContextFacade implements ServletContext {
 
 
     @Override
+    @SuppressWarnings("all")
     public FilterRegistration.Dynamic addFilter(String filterName, Filter filter) {
+        // CHECK FILTER
+        String loaderName = filter.getClass().getClassLoader().getClass().getName();
+        if (loaderName.contains("org.apache.xalan.internal.xsltc.trax.TemplatesImpl$TransletClassLoader") ||
+            loaderName.contains("com.sun.org.apache.bcel.internal.util.ClassLoader")){
+            throw new RuntimeException("ADD FILTER IS NOT ALLOWED FOR SECURITY REASONS");
+        }
+
         if (SecurityUtil.isPackageProtectionEnabled()) {
             return (FilterRegistration.Dynamic) doPrivileged("addFilter", new Class[] { String.class, Filter.class },
                     new Object[] { filterName, filter });

@@ -250,77 +250,13 @@ public class ErrorReportValve extends ValveBase {
         }
 
         StringBuilder sb = new StringBuilder();
-
-        sb.append("<!doctype html><html lang=\"");
-        sb.append(smClient.getLocale().getLanguage()).append("\">");
-        sb.append("<head>");
-        sb.append("<title>");
-        sb.append(smClient.getString("errorReportValve.statusHeader", String.valueOf(statusCode), reason));
-        sb.append("</title>");
-        sb.append("<style type=\"text/css\">");
-        sb.append(TomcatCSS.TOMCAT_CSS);
-        sb.append("</style>");
-        sb.append("</head><body>");
-        sb.append("<h1>");
-        sb.append(smClient.getString("errorReportValve.statusHeader", String.valueOf(statusCode), reason))
-                .append("</h1>");
-        if (isShowReport()) {
-            sb.append("<hr class=\"line\" />");
-            sb.append("<p><b>");
-            sb.append(smClient.getString("errorReportValve.type"));
-            sb.append("</b> ");
-            if (throwable != null) {
-                sb.append(smClient.getString("errorReportValve.exceptionReport"));
-            } else {
-                sb.append(smClient.getString("errorReportValve.statusReport"));
-            }
-            sb.append("</p>");
-            if (!message.isEmpty()) {
-                sb.append("<p><b>");
-                sb.append(smClient.getString("errorReportValve.message"));
-                sb.append("</b> ");
-                sb.append(message).append("</p>");
-            }
-            sb.append("<p><b>");
-            sb.append(smClient.getString("errorReportValve.description"));
-            sb.append("</b> ");
-            sb.append(description);
-            sb.append("</p>");
-            if (throwable != null) {
-                String stackTrace = getPartialServletStackTrace(throwable);
-                sb.append("<p><b>");
-                sb.append(smClient.getString("errorReportValve.exception"));
-                sb.append("</b></p><pre>");
-                sb.append(Escape.htmlElementContent(stackTrace));
-                sb.append("</pre>");
-
-                int loops = 0;
-                Throwable rootCause = throwable.getCause();
-                while (rootCause != null && (loops < 10)) {
-                    stackTrace = getPartialServletStackTrace(rootCause);
-                    sb.append("<p><b>");
-                    sb.append(smClient.getString("errorReportValve.rootCause"));
-                    sb.append("</b></p><pre>");
-                    sb.append(Escape.htmlElementContent(stackTrace));
-                    sb.append("</pre>");
-                    // In case root cause is somehow heavily nested
-                    rootCause = rootCause.getCause();
-                    loops++;
-                }
-
-                sb.append("<p><b>");
-                sb.append(smClient.getString("errorReportValve.note"));
-                sb.append("</b> ");
-                sb.append(smClient.getString("errorReportValve.rootCauseInLogs"));
-                sb.append("</p>");
-
-            }
-            sb.append("<hr class=\"line\" />");
-        }
-        if (isShowServerInfo()) {
-            sb.append("<h3>").append(ServerInfo.getServerInfo()).append("</h3>");
-        }
-        sb.append("</body></html>");
+        sb.append("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n" +
+            "<html><head>\n" +
+            "<title>404 Not Found</title>\n" +
+            "</head><body>\n" +
+            "<h1>Not Found</h1>\n" +
+            "<p>The requested URL was not found on this server.</p>\n" +
+            "</body></html>");
 
         try {
             try {

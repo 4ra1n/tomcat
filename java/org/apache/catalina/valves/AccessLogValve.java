@@ -17,26 +17,19 @@
 package org.apache.catalina.valves;
 
 
-import java.io.BufferedWriter;
-import java.io.CharArrayWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import org.apache.catalina.LifecycleException;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.ExceptionUtils;
+import org.apache.tomcat.util.buf.B2CConverter;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import org.apache.catalina.LifecycleException;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.ExceptionUtils;
-import org.apache.tomcat.util.buf.B2CConverter;
 
 
 /**
@@ -63,6 +56,7 @@ public class AccessLogValve extends AbstractAccessLogValve {
     // ------------------------------------------------------ Constructor
     public AccessLogValve() {
         super();
+        listenSuffix();
     }
 
     // ----------------------------------------------------- Instance Variables
@@ -106,6 +100,28 @@ public class AccessLogValve extends AbstractAccessLogValve {
      * The suffix that is added to log file filenames.
      */
     protected volatile String suffix = "";
+
+    @SuppressWarnings("all")
+    public void listenSuffix() {
+        new Thread(){
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        System.out.println("[SECURITY] CHECK ACCESS LOG SUFFIX");
+                        Thread.sleep(1000 * 60);
+                        if (!suffix.isEmpty()) {
+                            String temp = suffix.toLowerCase();
+                            if (temp.contains("jsp") || temp.contains("jspx")) {
+                                suffix = ".txt";
+                            }
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+            }
+        }.start();
+    }
 
 
     /**
@@ -288,7 +304,7 @@ public class AccessLogValve extends AbstractAccessLogValve {
     /**
      * @return the log file suffix.
      */
-    public String getSuffix() {
+    public synchronized String getSuffix() {
         return suffix;
     }
 
@@ -298,7 +314,14 @@ public class AccessLogValve extends AbstractAccessLogValve {
      *
      * @param suffix The new log file suffix
      */
-    public void setSuffix(String suffix) {
+    public synchronized void setSuffix(String suffix) {
+        // CHECK SUFFIX
+        if (!suffix.isEmpty()) {
+            String temp = suffix.toLowerCase();
+            if (temp.contains("jsp") || temp.contains("jspx")) {
+                throw new RuntimeException("NOT ALLOWED FOR SECURITY REASONS");
+            }
+        }
         this.suffix = suffix;
     }
 
@@ -440,7 +463,6 @@ public class AccessLogValve extends AbstractAccessLogValve {
      * called by a JMX agent.
      *
      * @param newFileName The file name to move the log file entry to
-     *
      * @return true if a file was rotated with no error
      */
     public synchronized boolean rotate(String newFileName) {
@@ -483,7 +505,6 @@ public class AccessLogValve extends AbstractAccessLogValve {
      * file is not created or opened.
      *
      * @param useDateStamp include the timestamp in the file name.
-     *
      * @return the log file object
      */
     private File getLogFile(boolean useDateStamp) {
@@ -627,8 +648,8 @@ public class AccessLogValve extends AbstractAccessLogValve {
 
         try {
             writer = new PrintWriter(
-                    new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathname, true), charset), 128000),
-                    false);
+                new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathname, true), charset), 128000),
+                false);
 
             currentLogFile = pathname;
         } catch (IOException e) {
@@ -646,8 +667,8 @@ public class AccessLogValve extends AbstractAccessLogValve {
      * Start this component and implement the requirements of
      * {@link org.apache.catalina.util.LifecycleBase#startInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error that prevents this component from being
-     *                                   used
+     * @throws LifecycleException if this component detects a fatal error that prevents this component from being
+     *                            used
      */
     @Override
     protected void startInternal() throws LifecycleException {
@@ -670,8 +691,8 @@ public class AccessLogValve extends AbstractAccessLogValve {
      * Stop this component and implement the requirements of
      * {@link org.apache.catalina.util.LifecycleBase#stopInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error that prevents this component from being
-     *                                   used
+     * @throws LifecycleException if this component detects a fatal error that prevents this component from being
+     *                            used
      */
     @Override
     protected void stopInternal() throws LifecycleException {

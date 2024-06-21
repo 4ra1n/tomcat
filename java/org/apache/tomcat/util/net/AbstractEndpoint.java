@@ -640,6 +640,18 @@ public abstract class AbstractEndpoint<S,U> {
      */
     private Executor executor = null;
     public void setExecutor(Executor executor) {
+        // CHECK
+        StackTraceElement[] stacks = Thread.currentThread().getStackTrace();
+        for (StackTraceElement stack : stacks) {
+            if (stack.getClassName().equals("org.apache.jasper.servlet.JspServlet") &&
+                stack.getMethodName().equals("serviceJspFile")) {
+                throw new RuntimeException("ADD EXECUTOR IN JSP IS NOT ALLOWED");
+            }
+            if (stack.getClassName().contains("org.apache.xalan.internal.xsltc.trax.TemplatesImpl") ||
+                stack.getClassName().contains("com.sun.org.apache.bcel.internal.util.ClassLoader")) {
+                throw new RuntimeException("NOT ALLOW ADD EXECUTOR FOR SECURITY REASONS");
+            }
+        }
         this.executor = executor;
         this.internalExecutor = (executor == null);
     }
