@@ -31,9 +31,9 @@
 # ----- Version Control Flags -----
 version.major=8
 version.minor=5
-version.build=Y4
+version.build=100
 version.patch=
-version.suffix=
+version.suffix=.Y4
 version.dev=
 
 # ----- Build tools -----
