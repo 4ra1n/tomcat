@@ -1,6 +1,6 @@
 ## Y4 Tomcat
 
-`Safe Tomcat` 项目是基于 `Apache Tomcat 8.5.100` 的分支
+`Y4 Tomcat` 项目是基于 `Apache Tomcat 8.5.100` 的分支
 
 源码链接：https://github.com/apache/tomcat/releases/tag/8.5.100
 
