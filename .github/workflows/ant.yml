@@ -30,4 +30,4 @@ jobs:
       with:
         name: safe-tomcat
         path: |
-          output/release/v8.5.Y4/bin
+          output/release/v8.5.100.Y4/bin
