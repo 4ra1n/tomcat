@@ -16,30 +16,22 @@
  */
 package org.apache.catalina.valves;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.ErrorPageSupport;
 import org.apache.catalina.util.IOTools;
-import org.apache.catalina.util.ServerInfo;
-import org.apache.catalina.util.TomcatCSS;
 import org.apache.coyote.ActionCode;
 import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.descriptor.web.ErrorPage;
 import org.apache.tomcat.util.res.StringManager;
 import org.apache.tomcat.util.security.Escape;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * <p>
@@ -82,9 +74,8 @@ public class ErrorReportValve extends ValveBase {
      *
      * @param request  The servlet request to be processed
      * @param response The servlet response to be created
-     *
-     * @exception IOException      if an input/output error occurs
-     * @exception ServletException if a servlet error occurs
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet error occurs
      */
     @Override
     public void invoke(Request request, Response response) throws IOException, ServletException {
@@ -112,7 +103,7 @@ public class ErrorReportValve extends ValveBase {
                     // Now close immediately to signal to the client that
                     // something went wrong
                     response.getCoyoteResponse().action(ActionCode.CLOSE_NOW,
-                            request.getAttribute(RequestDispatcher.ERROR_EXCEPTION));
+                        request.getAttribute(RequestDispatcher.ERROR_EXCEPTION));
                 }
             }
             return;
@@ -157,7 +148,6 @@ public class ErrorReportValve extends ValveBase {
      *
      * @param statusCode the status code
      * @param throwable  the exception
-     *
      * @return the associated error page
      */
     protected ErrorPage findErrorPage(int statusCode, Throwable throwable) {
@@ -251,12 +241,20 @@ public class ErrorReportValve extends ValveBase {
 
         StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n" +
-            "<html><head>\n" +
-            "<title>404 Not Found</title>\n" +
-            "</head><body>\n" +
-            "<h1>Not Found</h1>\n" +
-            "<p>The requested URL was not found on this server.</p>\n" +
-            "</body></html>");
+                "<html><head>\n" +
+                "<title>404 Not Found</title>\n" +
+                "</head><body>\n" +
+                "<h1>Not Found</h1>\n" +
+                "<p>The requested URL ")
+            .append(request.getRequestURI())
+            .append(" was not found on this server.</p>\n")
+            .append("<!-- ")
+            .append(reason)
+            .append(" -->\n")
+            .append("<!-- ")
+            .append(description)
+            .append(" -->\n")
+            .append("</body></html>");
 
         try {
             try {
@@ -286,7 +284,6 @@ public class ErrorReportValve extends ValveBase {
      * Print out a partial servlet stack trace (truncating at the last occurrence of javax.servlet.).
      *
      * @param t The stack trace to process
-     *
      * @return the stack trace relative to the application layer
      */
     protected String getPartialServletStackTrace(Throwable t) {
@@ -296,7 +293,7 @@ public class ErrorReportValve extends ValveBase {
         int pos = elements.length;
         for (int i = elements.length - 1; i >= 0; i--) {
             if ((elements[i].getClassName().startsWith("org.apache.catalina.core.ApplicationFilterChain")) &&
-                    (elements[i].getMethodName().equals("internalDoFilter"))) {
+                (elements[i].getMethodName().equals("internalDoFilter"))) {
                 pos = i;
                 break;
             }
