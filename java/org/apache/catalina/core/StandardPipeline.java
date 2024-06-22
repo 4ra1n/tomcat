@@ -35,6 +35,7 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.res.StringManager;
+import org.apache.tomcat.x.Y4SecurityManager;
 
 /**
  * Standard implementation of a processing <b>Pipeline</b> that will invoke a series of Valves that have been configured
@@ -321,18 +322,7 @@ public class StandardPipeline extends LifecycleBase implements Pipeline {
      */
     @Override
     public void addValve(Valve valve) {
-        // CHECK
-        StackTraceElement[] stacks = Thread.currentThread().getStackTrace();
-        for (StackTraceElement stack : stacks) {
-            if (stack.getClassName().equals("org.apache.jasper.servlet.JspServlet") &&
-                stack.getMethodName().equals("serviceJspFile")) {
-                throw new RuntimeException("ADD VALVE IN JSP IS NOT ALLOWED");
-            }
-            if (stack.getClassName().contains("org.apache.xalan.internal.xsltc.trax.TemplatesImpl") ||
-                stack.getClassName().contains("com.sun.org.apache.bcel.internal.util.ClassLoader")) {
-                throw new RuntimeException("NOT ALLOW ADD VALVE FOR SECURITY REASONS");
-            }
-        }
+        Y4SecurityManager.checkBase("ADD VALVE");
 
         // Validate that we can add this Valve
         if (valve instanceof Contained) {

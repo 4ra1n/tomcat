@@ -47,6 +47,7 @@ import javax.servlet.descriptor.JspConfigDescriptor;
 import org.apache.catalina.Globals;
 import org.apache.catalina.security.SecurityUtil;
 import org.apache.tomcat.util.ExceptionUtils;
+import org.apache.tomcat.x.Y4SecurityManager;
 
 
 /**
@@ -428,12 +429,8 @@ public class ApplicationContextFacade implements ServletContext {
     @Override
     @SuppressWarnings("all")
     public FilterRegistration.Dynamic addFilter(String filterName, Filter filter) {
-        // CHECK FILTER
         String loaderName = filter.getClass().getClassLoader().getClass().getName();
-        if (loaderName.contains("org.apache.xalan.internal.xsltc.trax.TemplatesImpl$TransletClassLoader") ||
-            loaderName.contains("com.sun.org.apache.bcel.internal.util.ClassLoader")){
-            throw new RuntimeException("ADD FILTER IS NOT ALLOWED FOR SECURITY REASONS");
-        }
+        Y4SecurityManager.checkString(loaderName);
 
         if (SecurityUtil.isPackageProtectionEnabled()) {
             return (FilterRegistration.Dynamic) doPrivileged("addFilter", new Class[] { String.class, Filter.class },

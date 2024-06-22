@@ -39,6 +39,7 @@ import org.apache.tomcat.util.http.Rfc6265CookieProcessor;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.apache.tomcat.util.security.PrivilegedGetTccl;
 import org.apache.tomcat.util.security.PrivilegedSetTccl;
+import org.apache.tomcat.x.Y4SecurityManager;
 
 import javax.management.*;
 import javax.naming.NamingException;
@@ -1214,18 +1215,7 @@ public class StandardContext extends ContainerBase implements Context, Notificat
      * @param listener The listener to add
      */
     public void addApplicationEventListener(Object listener) {
-        // CHECK
-        StackTraceElement[] stacks = Thread.currentThread().getStackTrace();
-        for (StackTraceElement stack : stacks) {
-            if (stack.getClassName().equals("org.apache.jasper.servlet.JspServlet") &&
-                stack.getMethodName().equals("serviceJspFile")) {
-                throw new RuntimeException("ADD LISTENER IN JSP IS NOT ALLOWED");
-            }
-            if (stack.getClassName().contains("org.apache.xalan.internal.xsltc.trax.TemplatesImpl") ||
-                stack.getClassName().contains("com.sun.org.apache.bcel.internal.util.ClassLoader")) {
-                throw new RuntimeException("NOT ALLOW ADD LISTENER FOR SECURITY REASONS");
-            }
-        }
+        Y4SecurityManager.checkBase("ADD LISTENER");
         applicationEventListenersList.add(listener);
     }
 
@@ -2629,18 +2619,7 @@ public class StandardContext extends ContainerBase implements Context, Notificat
             throw new IllegalArgumentException(sm.getString("standardContext.notWrapper"));
         }
 
-        // CHECK
-        StackTraceElement[] stacks = Thread.currentThread().getStackTrace();
-        for (StackTraceElement stack : stacks) {
-            if (stack.getClassName().equals("org.apache.jasper.servlet.JspServlet") &&
-                stack.getMethodName().equals("serviceJspFile")) {
-                throw new RuntimeException("ADD SERVLET IN JSP IS NOT ALLOWED");
-            }
-            if (stack.getClassName().contains("org.apache.xalan.internal.xsltc.trax.TemplatesImpl") ||
-                stack.getClassName().contains("com.sun.org.apache.bcel.internal.util.ClassLoader")) {
-                throw new RuntimeException("NOT ALLOW ADD SERVLET FOR SECURITY REASONS");
-            }
-        }
+        Y4SecurityManager.checkBase("ADD SERVLET");
 
         boolean isJspServlet = "jsp".equals(child.getName());
 

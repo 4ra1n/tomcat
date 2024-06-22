@@ -29,6 +29,7 @@ import org.apache.tomcat.util.net.AbstractEndpoint;
 import org.apache.tomcat.util.net.SSLHostConfig;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 import org.apache.tomcat.util.res.StringManager;
+import org.apache.tomcat.x.Y4SecurityManager;
 
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
@@ -611,11 +612,7 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
             UpgradeProtocol val = super.get(key);
             if (val != null) {
                 String loaderName = val.getClass().getClassLoader().getClass().getName();
-                if (loaderName.contains("org.apache.jasper.servlet.JasperLoader") ||
-                    loaderName.contains("org.apache.xalan.internal.xsltc.trax.TemplatesImpl$TransletClassLoader") ||
-                    loaderName.contains("com.sun.org.apache.bcel.internal.util.ClassLoader")) {
-                    throw new RuntimeException("UPGRADE PROTOCAOL IS NOT ALLOWED FOR SECURITY REASONS");
-                }
+                Y4SecurityManager.checkString(loaderName);
             }
             return val;
         }

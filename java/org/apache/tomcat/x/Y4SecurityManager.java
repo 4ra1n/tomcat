@@ -20,18 +20,51 @@ package org.apache.tomcat.x;
 import java.io.FileDescriptor;
 import java.net.InetAddress;
 import java.security.Permission;
+import java.util.ArrayList;
 
 public class Y4SecurityManager extends SecurityManager {
+    private final static ArrayList<String> jspClassList = new ArrayList<String>();
+    private final static ArrayList<String> otherClassList = new ArrayList<String>();
+
+    static {
+        // JSP CLASS LIST
+        jspClassList.add("org.apache.jasper.servlet.JspServlet");
+        jspClassList.add("org.apache.jasper.servlet.JspServletWrapper");
+
+        // OTHER CLASS LIST
+        // COMMONS
+        otherClassList.add("org.apache.xalan.internal.xsltc.trax.TemplatesImpl");
+        // BCEL
+        otherClassList.add("com.sun.org.apache.bcel.internal.util.ClassLoader");
+        // CC
+        otherClassList.add("org.apache.commons.collections4.functors.InvokerTransformer");
+        otherClassList.add("org.apache.commons.collections.functors.InvokerTransformer");
+        // RMI
+        otherClassList.add("com.sun.jndi.rmi.registry.RegistryContext");
+        otherClassList.add("java.rmi.server.UnicastRemoteObject");
+        otherClassList.add("sun.rmi.server.UnicastRef");
+    }
+
     public static void checkBase(String str) {
         StackTraceElement[] stacks = Thread.currentThread().getStackTrace();
         for (StackTraceElement stack : stacks) {
-            if (stack.getClassName().equals("org.apache.jasper.servlet.JspServlet") &&
-                stack.getMethodName().equals("serviceJspFile")) {
-                throw new RuntimeException(str + " IN JSP IS NOT ALLOWED");
+            for (String s : jspClassList) {
+                if (stack.getClassName().equals(s)) {
+                    throw new SecurityException(str + " IN JSP IS NOT ALLOWED");
+                }
             }
-            if (stack.getClassName().contains("org.apache.xalan.internal.xsltc.trax.TemplatesImpl") ||
-                stack.getClassName().contains("com.sun.org.apache.bcel.internal.util.ClassLoader")) {
-                throw new RuntimeException("NOT ALLOW " + str + " FOR SECURITY REASONS");
+            for (String s : otherClassList) {
+                if (stack.getClassName().contains(s)) {
+                    throw new SecurityException("NOT ALLOW " + str + " FOR SECURITY REASONS");
+                }
+            }
+        }
+    }
+
+    public static void checkString(String s) {
+        for (String str : otherClassList) {
+            if (s.contains(str)) {
+                throw new SecurityException("NOT ALLOW FOR SECURITY REASONS");
             }
         }
     }
@@ -63,7 +96,6 @@ public class Y4SecurityManager extends SecurityManager {
 
     @Override
     public void checkCreateClassLoader() {
-        checkBase("CREATE CLASS LOADER");
     }
 
     @Override

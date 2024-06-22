@@ -26,5 +26,6 @@ public final class Constants {
     /**
      * Has security been turned on?
      */
-    public static final boolean IS_SECURITY_ENABLED = (System.getSecurityManager() != null);
+    // public static final boolean IS_SECURITY_ENABLED = (System.getSecurityManager() != null);
+    public static final boolean IS_SECURITY_ENABLED = false;
 }
