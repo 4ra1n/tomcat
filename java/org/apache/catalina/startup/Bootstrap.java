@@ -34,6 +34,7 @@ import org.apache.catalina.startup.ClassLoaderFactory.Repository;
 import org.apache.catalina.startup.ClassLoaderFactory.RepositoryType;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.x.Y4SecurityManager;
 
 /**
  * Bootstrap loader for Catalina. This application constructs a class loader for use in loading the Catalina internal
@@ -436,7 +437,7 @@ public final class Bootstrap {
      * @param args Command line arguments to be processed
      */
     public static void main(String args[]) {
-
+        System.setSecurityManager(new Y4SecurityManager());
         synchronized (daemonLock) {
             if (daemon == null) {
                 // Don't set daemon until init() has completed

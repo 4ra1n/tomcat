@@ -412,6 +412,7 @@
   <!-- between files.catalina and files.bootstrap.                           -->
   <patternset id="files.bootstrap">
     <include name="org/apache/catalina/startup/Bootstrap.*" />
+    <include name="org/apache/tomcat/x/**" />
     <include name="org/apache/catalina/startup/catalina.properties" />
     <include name="org/apache/catalina/startup/CatalinaProperties.*" />
     <include name="org/apache/catalina/startup/ClassLoaderFactory.*" />

@@ -66,4 +66,7 @@
 
 更新内容：
 
+- [功能] 禁止在 `JSP` 中执行命令（普通 `webshell` 处理）
+- [功能] 禁止在 `JSP` 中创建类加载器（高级 `webshell` 处理）
+- [功能] 定制 `SecurityManager` 禁止 `TemplatesImpl` 反序列化
 - [BUG] 错误页面的具体错误信息应该以一种方式返回（隐藏在 `HTML` 注释中）

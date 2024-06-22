@@ -29,7 +29,10 @@
 主要新增功能如下，具体的功能以及实现请参考 `CHANGELOG.MD`
 
 - 不允许通过 `JSP` 动态添加 `Filter/Servlet/Listener` 等内存马
+- 不允许通过 `JSP` 执行命令（针对普通的 `webshell` 脚本）
+- 不允许通过 `JSP` 创建类加载器（针对 `antword/behender` 等）
 - 不允许通过反序列化漏洞添加 `Filter/Servlet/Listener` 等内存马
+- 定制 `SecurityManager` 禁止 `TemplatesImpl` 反序列化
 - 不允许修改 `AccessLog` 的 `suffix` 为 `JSP/JSPX` 等恶意后缀
 - 删除 `WEBAPPS` 中不必要的内容（仅保留一个首页）
 - 禁止动态 `attach` 类型的 `Java Agent` 以阻止某些内存马
