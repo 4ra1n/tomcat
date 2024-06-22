@@ -1,4 +1,6 @@
-## CHANGELOG
+# CHANGELOG
+
+## 8.5.100.Y4
 
 #### 001 不允许在 `JSP` 中动态添加 `Filter`
 
@@ -15,47 +17,53 @@
 - 原因：阻止通过 `JSP` 或反序列化漏洞添加的 `Servlet` 类型内存马
 - 实现：黑名单方式拉黑例如 `TemplatesImpl` 等
 
-### 004 检查 `addApplicationEventListener` 堆栈信息
+#### 004 检查 `addApplicationEventListener` 堆栈信息
 
 - 原因：阻止通过 `JSP` 或反序列化漏洞添加的 `Listener` 类型内存马
 - 实现：黑名单方式拉黑例如 `TemplatesImpl` 等
 
-### 005 检查 `StandardPipeline.addValve` 堆栈信息
+#### 005 检查 `StandardPipeline.addValve` 堆栈信息
 
 - 原因：阻止通过 `JSP` 或反序列化漏洞添加的 `Valve` 类型内存马
 - 实现：黑名单方式拉黑例如 `TemplatesImpl` 等
 
-### 006 检查 `AbstractEndpoint.setExcutor` 堆栈信息
+#### 006 检查 `AbstractEndpoint.setExcutor` 堆栈信息
 
 - 原因：阻止通过 `JSP` 或反序列化漏洞添加的 `Excutor` 类型内存马
 - 实现：黑名单方式拉黑例如 `TemplatesImpl` 等
 
-### 007 检查 `httpUpgradeProtocols.get` 类加载器信息
+#### 007 检查 `httpUpgradeProtocols.get` 类加载器信息
 
 - 原因：阻止动态添加的 `Upgrade` 内存马的利用
 - 实现：检查 `UpgradeProtocol` 类加载器黑名单
 
-### 008 不允许 `AccessLog` 设置恶意 `suffix`
+#### 008 不允许 `AccessLog` 设置恶意 `suffix`
 
 - 原因：防止其他组件修改 `AccessLog` 为 `JSP/JSPX` 后缀
 - 实现：限制 `set` 方法并定时循环检查是否合法
 
-### 009 删除 `WEBAPPS` 不必要的内容
+#### 009 删除 `WEBAPPS` 不必要的内容
 
 - 原因：简化
 - 实现：修改 `build.xml` 文件
 
-### 010 不允许动态 `Java Agent`
+#### 010 不允许动态 `Java Agent`
 
 - 原因：拒绝普通的 `Java Agent` 类型内存马
 - 实现：加入 `-XX:+DisableAttachMechanism` 参数
 
-### 011 修改默认配置文件
+#### 011 修改默认配置文件
 
 - 原因：关闭不必要功能且防止被探测
 - 实现：关闭 `8005` 修改响应头为 `PHP`
 
-### 012 将 `Tomcat` 伪装成 `PHP`
+#### 012 将 `Tomcat` 伪装成 `PHP`
 
 - 原因：迷惑其他人
 - 实现：修改首页和默认的 `404` 渲染代码
+
+## 8.5.100.Y4.01
+
+更新内容：
+
+- [BUG] 错误页面的具体错误信息应该以一种方式返回（隐藏在 `HTML` 注释中）
