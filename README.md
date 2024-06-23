@@ -42,7 +42,7 @@
 
 - 不允许通过 `JSP` 动态添加 `Filter/Servlet/Listener` 等内存马
 - 不允许通过 `JSP` 执行命令（针对 `webshell` 脚本）
-- 不孕在通过 `JSP` 进行 `defineClass` 操作（针对高级 `webshell`）
+- 不允许通过 `JSP` 进行 `defineClass` 操作（针对高级 `webshell`）
 - 不允许通过反序列化漏洞添加 `Filter/Servlet/Listener` 等内存马
 - 定制 `SecurityManager` 禁止 `TemplatesImpl` 反序列化
 - 不允许修改 `AccessLog` 的 `suffix` 为 `JSP/JSPX` 等恶意后缀
