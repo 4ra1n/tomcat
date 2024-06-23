@@ -25,6 +25,6 @@ jobs:
     - name: upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: safe-tomcat
+        name: y4-tomcat
         path: |
-          output/release/v8.5.100.Y4/bin
+          output/release/
