@@ -19,6 +19,10 @@ package org.apache.tomcat.x;
 
 import java.io.FileDescriptor;
 import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.security.Permission;
 import java.util.ArrayList;
 
@@ -26,7 +30,38 @@ public class Y4SecurityManager extends SecurityManager {
     private final static ArrayList<String> jspClassList = new ArrayList<String>();
     private final static ArrayList<String> otherClassList = new ArrayList<String>();
 
+    private final static Path logPath = Paths.get("security-logs");
+    private final static Path cmdLogPath = logPath.resolve(Paths.get("cmd.log"));
+    private final static Path connLogPath = logPath.resolve(Paths.get("conn.log"));
+    private final static Path listenLogPath = logPath.resolve(Paths.get("listen.log"));
+    private final static Path linkLogPath = logPath.resolve(Paths.get("link.log"));
+    private final static Path deleteLogPath = logPath.resolve(Paths.get("delete.log"));
+
     static {
+        try {
+            Files.createDirectories(logPath);
+        } catch (Exception ignored) {
+        }
+        try {
+            Files.createFile(cmdLogPath);
+        } catch (Exception ignored) {
+        }
+        try {
+            Files.createFile(connLogPath);
+        } catch (Exception ignored) {
+        }
+        try {
+            Files.createFile(listenLogPath);
+        } catch (Exception ignored) {
+        }
+        try {
+            Files.createFile(linkLogPath);
+        } catch (Exception ignored) {
+        }
+        try {
+            Files.createFile(deleteLogPath);
+        } catch (Exception ignored) {
+        }
         // JSP CLASS LIST
         jspClassList.add("org.apache.jasper.servlet.JspServlet");
         jspClassList.add("org.apache.jasper.servlet.JspServletWrapper");
@@ -71,11 +106,24 @@ public class Y4SecurityManager extends SecurityManager {
 
     @Override
     public void checkExec(String cmd) {
+        String log = String.format("RUN COMMAND: %s\n", cmd);
+        try {
+            Files.write(cmdLogPath, log.getBytes(), StandardOpenOption.APPEND);
+        } catch (Exception ignored) {
+        }
         checkBase("RUN COMMAND");
     }
 
     @Override
     public void checkConnect(String host, int port) {
+        if (port < 1) {
+            return;
+        }
+        String log = String.format("CONNECT TO %s:%d\n", host, Integer.valueOf(port));
+        try {
+            Files.write(connLogPath, log.getBytes(), StandardOpenOption.APPEND);
+        } catch (Exception ignored) {
+        }
     }
 
     @Override
@@ -100,6 +148,11 @@ public class Y4SecurityManager extends SecurityManager {
 
     @Override
     public void checkDelete(String file) {
+        String log = String.format("DELETE FILE: %s\n", file);
+        try {
+            Files.write(deleteLogPath, log.getBytes(), StandardOpenOption.APPEND);
+        } catch (Exception ignored) {
+        }
     }
 
     @Override
@@ -108,10 +161,23 @@ public class Y4SecurityManager extends SecurityManager {
 
     @Override
     public void checkLink(String lib) {
+        String log = String.format("LOAD LIB: %s\n", lib);
+        try {
+            Files.write(linkLogPath, log.getBytes(), StandardOpenOption.APPEND);
+        } catch (Exception ignored) {
+        }
     }
 
     @Override
     public void checkListen(int port) {
+        if (port == 0) {
+            return;
+        }
+        String log = String.format("LISTEN: %d\n", Integer.valueOf(port));
+        try {
+            Files.write(listenLogPath, log.getBytes(), StandardOpenOption.APPEND);
+        } catch (Exception ignored) {
+        }
     }
 
     @Override
