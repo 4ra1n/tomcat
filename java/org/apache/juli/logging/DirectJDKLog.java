@@ -166,7 +166,7 @@ class DirectJDKLog implements Log {
                 method = caller.getMethodName();
             }
             if (cname.contains(".")) {
-                cname = cname.substring(cname.lastIndexOf(".") + 1, cname.length() - 1);
+                cname = cname.substring(cname.lastIndexOf(".") + 1);
             }
             if (ex == null) {
                 logger.logp(level, cname, method, msg);
