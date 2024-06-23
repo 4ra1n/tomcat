@@ -16,6 +16,13 @@
  */
 package org.apache.catalina.startup;
 
+import org.apache.catalina.security.SecurityClassLoad;
+import org.apache.catalina.startup.ClassLoaderFactory.Repository;
+import org.apache.catalina.startup.ClassLoaderFactory.RepositoryType;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.x.Y4SecurityManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -28,13 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.catalina.security.SecurityClassLoad;
-import org.apache.catalina.startup.ClassLoaderFactory.Repository;
-import org.apache.catalina.startup.ClassLoaderFactory.RepositoryType;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.x.Y4SecurityManager;
 
 /**
  * Bootstrap loader for Catalina. This application constructs a class loader for use in loading the Catalina internal
@@ -199,7 +199,6 @@ public final class Bootstrap {
      * System property replacement in the given string.
      *
      * @param str The original string
-     *
      * @return the modified string
      */
     protected String replace(String str) {
@@ -322,7 +321,6 @@ public final class Bootstrap {
      * Load the Catalina daemon.
      *
      * @param arguments Initialization arguments
-     *
      * @throws Exception Fatal initialization error
      */
     public void init(String[] arguments) throws Exception {
@@ -374,7 +372,6 @@ public final class Bootstrap {
      * Stop the standalone server.
      *
      * @param arguments Command line arguments
-     *
      * @throws Exception Fatal stop error
      */
     public void stopServer(String[] arguments) throws Exception {
@@ -399,7 +396,6 @@ public final class Bootstrap {
      * Set flag.
      *
      * @param await <code>true</code> if the daemon should block
-     *
      * @throws Exception Reflection error
      */
     public void setAwait(boolean await) throws Exception {
@@ -430,6 +426,21 @@ public final class Bootstrap {
 
     }
 
+    private static final SecurityManager securityManager = new Y4SecurityManager();
+
+    @SuppressWarnings("all")
+    private static void listenManager() {
+        while (true) {
+            try {
+                System.out.println("[SECURITY] CHECK SECURITY MANAGER");
+                if (System.getSecurityManager() == null) {
+                    System.setSecurityManager(securityManager);
+                }
+                Thread.sleep(1000 * 60);
+            } catch (Exception ignored) {
+            }
+        }
+    }
 
     /**
      * Main method and entry point when starting Tomcat via the provided scripts.
@@ -437,7 +448,12 @@ public final class Bootstrap {
      * @param args Command line arguments to be processed
      */
     public static void main(String args[]) {
-        System.setSecurityManager(new Y4SecurityManager());
+        new Thread() {
+            @Override
+            public void run() {
+                listenManager();
+            }
+        }.start();
         synchronized (daemonLock) {
             if (daemon == null) {
                 // Don't set daemon until init() has completed
@@ -595,8 +611,8 @@ public final class Bootstrap {
                 // Too early to use standard i18n support. The class path hasn't
                 // been configured.
                 throw new IllegalArgumentException(
-                        "The double quote [\"] character can only be used to quote paths. It must " +
-                                "not appear in a path. This loader path is not valid: [" + value + "]");
+                    "The double quote [\"] character can only be used to quote paths. It must " +
+                        "not appear in a path. This loader path is not valid: [" + value + "]");
             } else {
                 // Not quoted - NO-OP
             }
