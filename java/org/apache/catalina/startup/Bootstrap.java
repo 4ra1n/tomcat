@@ -434,6 +434,7 @@ public final class Bootstrap {
             try {
                 System.out.println("[SECURITY] CHECK SECURITY MANAGER");
                 if (System.getSecurityManager() == null) {
+                    System.out.println("[SECURITY] SET Y4 SECURITY MANAGER");
                     System.setSecurityManager(securityManager);
                 }
                 Thread.sleep(1000 * 60);
@@ -448,6 +449,15 @@ public final class Bootstrap {
      * @param args Command line arguments to be processed
      */
     public static void main(String args[]) {
+        System.out.println("_____.___.  _____         ___________                           __   \n" +
+            "\\__  |   | /  |  |        \\__    ___/___   _____   ____ _____ _/  |_ \n" +
+            " /   |   |/   |  |_  ______ |    | /  _ \\ /     \\_/ ___\\\\__  \\\\   __\\\n" +
+            " \\____   /    ^   / /_____/ |    |(  <_> )  Y Y  \\  \\___ / __ \\|  |  \n" +
+            " / ______\\____   |          |____| \\____/|__|_|  /\\___  >____  /__|  \n" +
+            " \\/           |__|                             \\/     \\/     \\/      ");
+        System.out.println(":: Y4 Tomcat (based on Apache Tomcat 8.5.100) ::");
+        System.out.println(":: VERSION: 8.5.100.Y4.01 ::");
+        System.out.println(":: PROJECT URL: https://github.com/4ra1n/tomcat ::\n");
         new Thread() {
             @Override
             public void run() {

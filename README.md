@@ -50,6 +50,7 @@
 - 禁止动态 `attach` 类型的 `Java Agent` 以阻止某些内存马
 - 修改响应头和错误页面等配置内容将 `Tomcat` 模拟为一个 `PHP` 服务
 - 自定义 `SecurityManager` 记录各种可能存在风险的操作
+- 删除 `BeanFactory` 防止 `JNDI` 漏洞利用的绕过
 
 ### 更新日志
 
