@@ -67,6 +67,7 @@
 更新内容：
 
 - [功能] 禁止在 `JSP` 中执行命令（针对 `webshell` 处理）
+- [功能] 禁止在 `JSP` 中进行 `defineClass` 操作
 - [功能] 记录 `连接/执行命令/JNI` 等各种可能存在风险的操作
 - [功能] 定制 `SecurityManager` 禁止 `TemplatesImpl` 反序列化
 - [功能] 定时监控 `SecurityManager` 不允许被设置为空
