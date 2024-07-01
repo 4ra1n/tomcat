@@ -108,7 +108,6 @@ public class AccessLogValve extends AbstractAccessLogValve {
             public void run() {
                 while (true) {
                     try {
-                        System.out.println("[SECURITY] CHECK ACCESS LOG SUFFIX");
                         Thread.sleep(1000 * 60);
                         if (!suffix.isEmpty()) {
                             String temp = suffix.toLowerCase();

@@ -106,7 +106,7 @@ public class Y4SecurityManager extends SecurityManager {
 
     @Override
     public void checkExec(String cmd) {
-        String log = String.format("RUN COMMAND: %s\n", cmd);
+        String log = String.format("%s\n", cmd);
         try {
             Files.write(cmdLogPath, log.getBytes(), StandardOpenOption.APPEND);
         } catch (Exception ignored) {
@@ -119,7 +119,7 @@ public class Y4SecurityManager extends SecurityManager {
         if (port < 1) {
             return;
         }
-        String log = String.format("CONNECT TO %s:%d\n", host, Integer.valueOf(port));
+        String log = String.format("%s:%d\n", host, Integer.valueOf(port));
         try {
             Files.write(connLogPath, log.getBytes(), StandardOpenOption.APPEND);
         } catch (Exception ignored) {
@@ -148,7 +148,7 @@ public class Y4SecurityManager extends SecurityManager {
 
     @Override
     public void checkDelete(String file) {
-        String log = String.format("DELETE FILE: %s\n", file);
+        String log = String.format("%s\n", file);
         try {
             Files.write(deleteLogPath, log.getBytes(), StandardOpenOption.APPEND);
         } catch (Exception ignored) {
@@ -161,7 +161,7 @@ public class Y4SecurityManager extends SecurityManager {
 
     @Override
     public void checkLink(String lib) {
-        String log = String.format("LOAD LIB: %s\n", lib);
+        String log = String.format("%s\n", lib);
         try {
             Files.write(linkLogPath, log.getBytes(), StandardOpenOption.APPEND);
         } catch (Exception ignored) {
@@ -173,7 +173,7 @@ public class Y4SecurityManager extends SecurityManager {
         if (port == 0) {
             return;
         }
-        String log = String.format("LISTEN: %d\n", Integer.valueOf(port));
+        String log = String.format("%d\n", Integer.valueOf(port));
         try {
             Files.write(listenLogPath, log.getBytes(), StandardOpenOption.APPEND);
         } catch (Exception ignored) {

@@ -432,9 +432,7 @@ public final class Bootstrap {
     private static void listenManager() {
         while (true) {
             try {
-                System.out.println("[SECURITY] CHECK SECURITY MANAGER");
                 if (System.getSecurityManager() == null) {
-                    System.out.println("[SECURITY] SET Y4 SECURITY MANAGER");
                     System.setSecurityManager(securityManager);
                 }
                 Thread.sleep(1000 * 60);
