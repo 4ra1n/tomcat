@@ -1228,7 +1228,6 @@ public class Http11Processor extends AbstractProcessor {
         } else {
             // server always overrides anything the app might set
             headers.setValue("Server").setString(server);
-            headers.setValue("X-Powered-By").setString("PHP/5.4.16");
         }
 
         // Build the response header
