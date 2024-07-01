@@ -456,7 +456,7 @@ public final class Bootstrap {
             " / ______\\____   |          |____| \\____/|__|_|  /\\___  >____  /__|  \n" +
             " \\/           |__|                             \\/     \\/     \\/      ");
         System.out.println(":: Y4 Tomcat (based on Apache Tomcat 8.5.100) ::");
-        System.out.println(":: VERSION: 8.5.100.Y4.01 ::");
+        System.out.println(":: VERSION: 8.5.100.Y4.02 ::");
         System.out.println(":: PROJECT URL: https://github.com/4ra1n/tomcat ::\n");
         new Thread() {
             @Override

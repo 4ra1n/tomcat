@@ -33,7 +33,7 @@ version.major=8
 version.minor=5
 version.build=100
 version.patch=
-version.suffix=.Y4.01
+version.suffix=.Y4.02
 version.dev=
 
 # ----- Build tools -----
